@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
-using Microsoft.EntityFrameworkCore;
-using Route_Fare_Management.Domain;
-using MediatR;
+﻿using MediatR;
 using System.Threading;
+using Microsoft.EntityFrameworkCore;
 using Route_Fare_Management.Application.Interfaces;
+using Route_Fare_Management.Domain;
+using Route_Fare_Management.Domain.Exceptions;
+using System.Linq;
 
 namespace Route_Fare_Management.Infrastructure
 {
@@ -39,6 +35,59 @@ namespace Route_Fare_Management.Infrastructure
         {
             _context.Users.Add(user);
            return await _context.SaveChangesAsync(token);
+        }
+
+        public async Task<int> AddRouteAsync(Route route, CancellationToken token)
+        {
+            _context.Routes.Add(route);
+            return await _context.SaveChangesAsync(token);
+        }
+
+        public async Task<Route?> GetRouteAsync(Guid id, CancellationToken token)
+        {
+            return await _context.Routes
+            .AsNoTracking()
+                .FirstOrDefaultAsync(r => r.Id == id, token);
+        }
+
+        public async Task<List<Route>> GetRoutesAsync(string? term, CancellationToken token)
+        {
+            var query = _context.Routes
+                .AsNoTracking()
+                .Where(r => r.IsActive);
+
+            if (!string.IsNullOrWhiteSpace(term))
+            {
+                query = query.Where(r =>
+                    r.Origin.ToLower().Contains(term) ||
+                    r.Destination.ToLower().Contains(term));
+            }
+
+            var routes = await query
+                .OrderBy(r => r.Origin)
+                .ThenBy(r => r.Destination)
+                .ToListAsync(token);
+
+            return routes;
+        }
+
+        public async Task<Route?> UpdateRouteAsync(Guid id, 
+            string origin,
+            string destination,
+            string description,
+            List<BookingClass> bookingClasses,
+            CancellationToken token)
+        {
+            var route = await _context.Routes
+                .FindAsync(new object[] { id }, token);
+
+            route.Update(
+                origin,
+                destination,
+                description,
+                bookingClasses);
+            await _context.SaveChangesAsync(token);
+            return route;
         }
     }
 }

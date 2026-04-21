@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Route_Fare_Management.Application
+namespace Route_Fare_Management.Application.Auth
 {
     public record AuthResponseDto(
         Guid UserId,

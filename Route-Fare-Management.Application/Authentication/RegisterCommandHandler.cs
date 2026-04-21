@@ -7,17 +7,16 @@ using MediatR;
 using Route_Fare_Management.Application.Interfaces;
 using Route_Fare_Management.Domain;
 
-namespace Route_Fare_Management.Application
+namespace Route_Fare_Management.Application.Auth
 {
-
-    public sealed class LoginCommandHandler
-        : IRequestHandler<LoginCommand, AuthResponseDto>
+    public class RegisterCommandHandler
+        : IRequestHandler<RegisterCommand, AuthResponseDto>
     {
         private readonly IRepository _context;
         private readonly IJwtService _jwt;
         private readonly IPasswordHasher _hasher;
 
-        public LoginCommandHandler(
+        public RegisterCommandHandler(
             IRepository context,
             IJwtService jwt,
             IPasswordHasher hasher)
@@ -28,14 +27,18 @@ namespace Route_Fare_Management.Application
         }
 
         public async Task<AuthResponseDto> Handle(
-            LoginCommand request, CancellationToken cancellationToken)
+            RegisterCommand request, CancellationToken cancellationToken)
         {
-            var user = await _context.GetUserAsync(request.Email, cancellationToken)
-                ?? throw new NotFoundException(
-                    nameof(User), request.Email);
+            var hash = _hasher.Hash(request.Password);
 
-            if (!_hasher.Verify(request.Password, user.PasswordHash))
-                throw new DomainException("Invalid email or password.");
+            var user = request.Role == UserRole.Admin
+                ? User.CreateAdmin(request.Email, hash, request.FirstName, request.LastName)
+                : User.CreateTourOperatorMember(
+                    request.Email, hash,
+                    request.FirstName, request.LastName,
+                    request.TourOperatorId!.Value);
+
+            await _context.AddUserAsync(user, cancellationToken);
 
             var token = _jwt.GenerateToken(user);
 
@@ -45,5 +48,4 @@ namespace Route_Fare_Management.Application
                 token, DateTime.UtcNow.AddHours(24));
         }
     }
-
 }

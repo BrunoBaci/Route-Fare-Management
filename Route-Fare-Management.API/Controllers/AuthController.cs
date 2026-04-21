@@ -1,6 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Route_Fare_Management.Application;
+using Route_Fare_Management.Application.Auth;
 
 namespace Route_Fare_Management.API.Controllers
 {

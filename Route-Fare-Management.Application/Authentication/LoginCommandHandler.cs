@@ -6,17 +6,19 @@ using System.Threading.Tasks;
 using MediatR;
 using Route_Fare_Management.Application.Interfaces;
 using Route_Fare_Management.Domain;
+using Route_Fare_Management.Domain.Exceptions;
 
-namespace Route_Fare_Management.Application
+namespace Route_Fare_Management.Application.Auth
 {
-    public sealed class RegisterCommandHandler
-        : IRequestHandler<RegisterCommand, AuthResponseDto>
+
+    public sealed class LoginCommandHandler
+        : IRequestHandler<LoginCommand, AuthResponseDto>
     {
         private readonly IRepository _context;
         private readonly IJwtService _jwt;
         private readonly IPasswordHasher _hasher;
 
-        public RegisterCommandHandler(
+        public LoginCommandHandler(
             IRepository context,
             IJwtService jwt,
             IPasswordHasher hasher)
@@ -27,18 +29,14 @@ namespace Route_Fare_Management.Application
         }
 
         public async Task<AuthResponseDto> Handle(
-            RegisterCommand request, CancellationToken cancellationToken)
+            LoginCommand request, CancellationToken cancellationToken)
         {
-            var hash = _hasher.Hash(request.Password);
+            var user = await _context.GetUserAsync(request.Email, cancellationToken)
+                ?? throw new NotFoundException(
+                    nameof(User), request.Email);
 
-            var user = request.Role == UserRole.Admin
-                ? User.CreateAdmin(request.Email, hash, request.FirstName, request.LastName)
-                : User.CreateTourOperatorMember(
-                    request.Email, hash,
-                    request.FirstName, request.LastName,
-                    request.TourOperatorId!.Value);
-
-            await _context.AddUserAsync(user, cancellationToken);
+            if (!_hasher.Verify(request.Password, user.PasswordHash))
+                throw new DomainException("Invalid email or password.");
 
             var token = _jwt.GenerateToken(user);
 
@@ -48,4 +46,5 @@ namespace Route_Fare_Management.Application
                 token, DateTime.UtcNow.AddHours(24));
         }
     }
+
 }

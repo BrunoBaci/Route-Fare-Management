@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using MediatR;
 
-namespace Route_Fare_Management.Application
+namespace Route_Fare_Management.Application.Auth
 {
     public record LoginCommand(
         string Email,
