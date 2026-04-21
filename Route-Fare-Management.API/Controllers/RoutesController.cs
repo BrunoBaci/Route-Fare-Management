@@ -1,6 +1,9 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Route_Fare_Management.Application.RouteFunctionality.Commands;
+using Route_Fare_Management.Application.RouteFunctionality.DTOs;
+using Route_Fare_Management.Application.RouteFunctionality.Queries;
 
 namespace Route_Fare_Management.API.Controllers
 {
@@ -12,13 +15,13 @@ namespace Route_Fare_Management.API.Controllers
 
         /// <summary>Get a paginated, searchable list of active routes.</summary>
         [HttpGet]
-        [ProducesResponseType(typeof(PaginatedList<RouteDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(List<RouteDto>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetAll(
             [FromQuery] int page = 1,
             [FromQuery] int pageSize = 20,
             [FromQuery] string? search = null,
             CancellationToken ct = default)
-            => Ok(await _mediator.Send(new GetRoutesQuery(page, pageSize, search), ct));
+            => Ok(await _mediator.Send(new GetRoutesQuery(search), ct));
 
         /// <summary>Get a single route by ID.</summary>
         [HttpGet("{id:guid}")]
@@ -51,4 +54,4 @@ namespace Route_Fare_Management.API.Controllers
             => Ok(await _mediator.Send(command with { Id = id }, ct));
     }
 }
-}
+
