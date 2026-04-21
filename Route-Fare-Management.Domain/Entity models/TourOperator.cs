@@ -1,0 +1,55 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Route_Fare_Management.Domain
+{
+
+    public sealed class TourOperator : BaseEntity
+    {
+        public string Name { get; private set; } = default!;
+        public string Code { get; private set; } = default!;
+        public bool IsActive { get; private set; } = true;
+
+        // Private backing field — EF Core accesses this directly via HasField()
+        // Exposed as read-only collection to prevent external mutation
+        private List<BookingClass> _supportedBookingClasses = new();
+
+        public IReadOnlyCollection<BookingClass> SupportedBookingClasses
+            => _supportedBookingClasses.AsReadOnly();
+
+        public ICollection<TourOperatorRoute> TourOperatorRoutes { get; private set; }
+            = new List<TourOperatorRoute>();
+
+        public ICollection<User> Members { get; private set; }
+            = new List<User>();
+
+        // Required by EF Core
+        private TourOperator() { }
+
+        public static TourOperator Create(
+            string name, string code, IEnumerable<BookingClass> bookingClasses)
+        {
+            var op = new TourOperator
+            {
+                Name = name.Trim(),
+                Code = code.Trim().ToUpperInvariant()
+            };
+            op._supportedBookingClasses = bookingClasses.Distinct().ToList();
+            return op;
+        }
+
+        public void Update(string name, IEnumerable<BookingClass> bookingClasses)
+        {
+            Name = name.Trim();
+            _supportedBookingClasses = bookingClasses.Distinct().ToList();
+            SetUpdatedAt();
+        }
+
+        public void Deactivate() { IsActive = false; SetUpdatedAt(); }
+        public void Activate() { IsActive = true; SetUpdatedAt(); }
+    }
+
+}
