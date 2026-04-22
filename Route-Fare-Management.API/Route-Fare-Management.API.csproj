@@ -9,12 +9,15 @@
 
   <ItemGroup>
     <PackageReference Include="MediatR" Version="14.1.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.15" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.0" />
+    <PackageReference Include="Snail.Toolkit.Authentication.JwtBearer" Version="1.0.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Route-Fare-Management.Application\Route-Fare-Management.Application.csproj" />
     <ProjectReference Include="..\Route-Fare-Management.Domain\Route-Fare-Management.Domain.csproj" />
+    <ProjectReference Include="..\Route-Fare-Management.Infrastructure\Route-Fare-Management.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

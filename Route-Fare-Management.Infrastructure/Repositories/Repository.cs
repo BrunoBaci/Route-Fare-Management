@@ -6,10 +6,10 @@ using Route_Fare_Management.Domain;
 using Route_Fare_Management.Domain.Exceptions;
 using System.Linq;
 
-namespace Route_Fare_Management.Infrastructure
+namespace Route_Fare_Management.Infrastructure.Repositories
 {
     public class Repository : IRepository
-    {   
+    {
         private readonly AppDbContext _context;
         public Repository(AppDbContext context)
         {
@@ -34,7 +34,7 @@ namespace Route_Fare_Management.Infrastructure
         public async Task<int> AddUserAsync(User user, CancellationToken token)
         {
             _context.Users.Add(user);
-           return await _context.SaveChangesAsync(token);
+            return await _context.SaveChangesAsync(token);
         }
 
         public async Task<int> AddRouteAsync(Route route, CancellationToken token)
@@ -71,7 +71,7 @@ namespace Route_Fare_Management.Infrastructure
             return routes;
         }
 
-        public async Task<Route?> UpdateRouteAsync(Guid id, 
+        public async Task<Route?> UpdateRouteAsync(Guid id,
             string origin,
             string destination,
             string description,
