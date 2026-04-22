@@ -27,7 +27,7 @@ namespace Route_Fare_Management.Application.RouteFunctionality.Handlers
                 request.Description,
                 request.BookingClasses);
 
-            await _context.AddRouteAsync(route, cancellationToken);
+            await _context.AddAndSaveAsync(route, cancellationToken);
 
             return route.ToDto();
         }

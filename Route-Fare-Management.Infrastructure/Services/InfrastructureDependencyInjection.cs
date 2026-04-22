@@ -1,78 +1,57 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Route_Fare_Management.Application.Interfaces;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.AspNetCore.Authentication;
 using Route_Fare_Management.Infrastructure.Repositories;
 
 namespace Route_Fare_Management.Infrastructure.Services
 {
-    /// <summary>
-    /// This class will be used to register infrastructure dependencies 
-    /// without referring to infrastructure in API layer
-    /// </summary>
     public static class InfrastructureDependencyInjection
     {
         public static IServiceCollection AddInfrastructure(
             this IServiceCollection services,
             IConfiguration configuration)
         {
-            //  SQL Server 
             services.AddDbContext<AppDbContext>(opts =>
                 opts.UseSqlServer(
-                    configuration.GetConnectionString("ConnectionString"),
+                    configuration.GetConnectionString("DefaultConnection"),
                     sql =>
                     {
-                        sql.MigrationsAssembly(
-                            typeof(AppDbContext).Assembly.FullName);
-                        sql.EnableRetryOnFailure(
-                            maxRetryCount: 3,
-                            maxRetryDelay: TimeSpan.FromSeconds(5),
-                            errorNumbersToAdd: null);
+                        sql.MigrationsAssembly(typeof(AppDbContext).Assembly.FullName);
                         sql.CommandTimeout(60);
                     }));
 
-            services.AddScoped<IRepository>(sp =>
-                sp.GetRequiredService<Repository>());
+            // -------------------- Repository --------------------
+            services.AddScoped<IRepository, Repository>();
 
-            services.AddScoped<AppDbContext>();
+            // -------------------- Security --------------------
             services.AddScoped<IPasswordHasher, BcryptPasswordHasher>();
 
+            // -------------------- User Context --------------------
             services.AddScoped<ICurrentUserService, CurrentUserService>();
 
-            // Export
+            // -------------------- Export --------------------
             services.AddScoped<IExportService, ExcelExportService>();
-            // SignalR
+
+            //  Notifications (SignalR abstraction) 
             services.AddScoped<INotificationService, SignalRNotificationService>();
 
-            services.AddAuthorizationBuilder()
-                .AddPolicy("AdminOnly",
-                    p => p.RequireRole("Admin"))
-                .AddPolicy("OperatorOrAdmin",
-                    p => p.RequireRole("Admin", "TourOperatorMember"));
-
             return services;
-        }
+        
+            /// <summary>
+            /// Applies any pending EF Core migrations.
+            /// Called from Program.cs after app.Build() 
+            /// </summary>
+            //public static async Task ApplyMigrationsAsync(IServiceProvider services)
+            //{
+            //    using var scope = services.CreateScope();
+            //    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
-        /// <summary>
-        /// Applies any pending EF Core migrations.
-        /// Called from Program.cs after app.Build() 
-        /// </summary>
-        //public static async Task ApplyMigrationsAsync(IServiceProvider services)
-        //{
-        //    using var scope = services.CreateScope();
-        //    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+            //    // InMemory database does not support migrations
+            //    if (db.Database.IsInMemory()) return;
 
-        //    // InMemory database does not support migrations
-        //    if (db.Database.IsInMemory()) return;
-
-        //    await db.Database.MigrateAsync();
-        //}
+            //    await db.Database.MigrateAsync();
+            //}
+            }
     }
 }

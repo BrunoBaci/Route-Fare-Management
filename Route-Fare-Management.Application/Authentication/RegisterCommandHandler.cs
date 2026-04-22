@@ -38,7 +38,7 @@ namespace Route_Fare_Management.Application.Auth
                     request.FirstName, request.LastName,
                     request.TourOperatorId!.Value);
 
-            await _context.AddUserAsync(user, cancellationToken);
+            await _context.AddAndSaveAsync(user, cancellationToken);
 
             var token = _jwt.GenerateToken(user);
 

@@ -1,42 +1,44 @@
+using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
 using MediatR;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Route_Fare_Management.API;
 using Route_Fare_Management.API.Services;
 using Route_Fare_Management.Application.Interfaces;
+using Route_Fare_Management.Application.TourOperator.HAndlers;
 using Route_Fare_Management.Infrastructure.Services;
+using System.Reflection;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
+//  Controllers 
 builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
-InfrastructureDependencyInjection.AddInfrastructure(
-        builder.Services, builder.Configuration);
+
+// Infrastructure 
+builder.Services.AddInfrastructure(builder.Configuration);
+
+//  MediatR 
 builder.Services.AddMediatR(cfg =>
 {
     cfg.RegisterServicesFromAssembly(typeof(Program).Assembly);
+    cfg.RegisterServicesFromAssembly(typeof(CreateTourOperatorCommandHandler).Assembly);
 });
 
+// JWT Settings 
 var jwtSettings = builder.Configuration
     .GetSection("JwtSettings")
     .Get<JwtSettings>()
     ?? throw new InvalidOperationException("JwtSettings missing");
 
-
-// for CurrentUserService
+//  HttpContext 
 builder.Services.AddHttpContextAccessor();
-
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+//  Authentication 
 builder.Services
-    .AddAuthentication(options =>
-    {
-        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-    })
+    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
         options.TokenValidationParameters = new TokenValidationParameters
@@ -45,14 +47,16 @@ builder.Services
             ValidateAudience = true,
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
+
             ValidIssuer = jwtSettings.Issuer,
             ValidAudience = jwtSettings.Audience,
             IssuerSigningKey = new SymmetricSecurityKey(
                 Encoding.UTF8.GetBytes(jwtSettings.SecretKey)),
+
             ClockSkew = TimeSpan.FromMinutes(5)
         };
 
-        // SignalR support 
+        // SignalR token support
         options.Events = new JwtBearerEvents
         {
             OnMessageReceived = ctx =>
@@ -70,24 +74,17 @@ builder.Services
             }
         };
     });
-builder.Services.AddSignalR(opts =>
-{
-    opts.EnableDetailedErrors = builder.Environment.IsDevelopment();
-});
-    builder.Services.AddScoped<IHubClientsAdapter, HubClientsAdapter>();
-// Roles
-builder.Services.AddAuthorization(options =>
-{
-    options.AddPolicy("AdminOnly",
-        p => p.RequireRole("Admin"));
 
-    options.AddPolicy("OperatorOrAdmin",
-        p => p.RequireRole("Admin", "TourOperatorMember"));
+builder.Services.AddScoped<IJwtService, JwtService>();
+//  SignalR 
+builder.Services.AddSignalR(options =>
+{
+    options.EnableDetailedErrors = builder.Environment.IsDevelopment();
 });
 
+builder.Services.AddScoped<IHubClientsAdapter, HubClientsAdapter>();
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
@@ -95,9 +92,12 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseAuthorization(); 
 app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapControllers();
+app.UseSwagger();
+app.UseSwaggerUI();
+//app.MapHub<HubClientsAdapter>("/hubs/notifications");
 
 app.Run();

@@ -29,6 +29,9 @@ namespace Route_Fare_Management.Infrastructure
                 typeof(AppDbContext).Assembly);
             base.OnModelCreating(modelBuilder);
 
+
+            modelBuilder.Ignore<DomainEvent>();
+
             modelBuilder.Entity<PricingEntry>(b =>
             {
                 b.ToTable("PricingEntries");
@@ -161,20 +164,42 @@ namespace Route_Fare_Management.Infrastructure
                  .OnDelete(DeleteBehavior.Cascade);
             });
 
-            modelBuilder.Entity<User>(b => { });
-            }
+            modelBuilder.Entity<User>(b => 
+            {
+                b.ToTable("Users");
+                b.HasKey(u => u.Id);
+
+                b.Property(u => u.Email).IsRequired().HasMaxLength(256);
+                b.HasIndex(u => u.Email).IsUnique();
+
+                b.Property(u => u.PasswordHash).IsRequired();
+                b.Property(u => u.FirstName).IsRequired().HasMaxLength(100);
+                b.Property(u => u.LastName).IsRequired().HasMaxLength(100);
+                b.Property(u => u.Role).HasConversion<int>().IsRequired();
+                b.Property(u => u.IsActive).IsRequired().HasDefaultValue(true);
+                b.Property(u => u.CreatedAt).IsRequired();
+                b.Property(u => u.UpdatedAt);
+
+                b.HasOne(u => u.TourOperator)
+                 .WithMany(t => t.Members)
+                 .HasForeignKey(u => u.TourOperatorId)
+                 .IsRequired(false)
+                 .OnDelete(DeleteBehavior.SetNull);
+
+            });
+        }
 
         public override async Task<int> SaveChangesAsync(
     CancellationToken cancellationToken = default)
         {
-            // 1. Collect domain events BEFORE saving (entities may be detached after)
+            //Collect domain events before saving (entities may be detached after)
             var entitiesWithEvents = ChangeTracker
                 .Entries<BaseEntity>()
                 .Select(e => e.Entity)
                 .Where(e => e.DomainEvents.Any())
                 .ToList();
 
-            // 2. Auto-stamp UpdatedAt on every modified entity
+            // Auto-stamp UpdatedAt on every modified entity
             foreach (var entry in ChangeTracker.Entries<BaseEntity>()
                 .Where(e => e.State == EntityState.Modified))
             {
