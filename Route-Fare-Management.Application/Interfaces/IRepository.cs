@@ -43,7 +43,7 @@ namespace Route_Fare_Management.Application.Interfaces
         Task<int> AddAndSaveAsync(TourOperatorRoute tourOperatorRoute, CancellationToken token);
         Task AddAsync(TourOperatorRoute entity, CancellationToken token);
         Task AddAsync(Domain.TourOperator entity, CancellationToken ct);
-        Task<Domain.TourOperator?> GetTourOperatorWithMembersAsync(Guid id, CancellationToken ct);
+        Task<Domain.TourOperator?> GetATourOperatorAsync(Guid id, CancellationToken ct);
         Task<List<TourOperatorRoute>> GetOperatorRoutesAsync(
             Guid tourOperatorId,
             Guid? seasonId,

@@ -71,7 +71,7 @@ namespace Route_Fare_Management.Infrastructure.Services
             await _context.TourOperators.AddAsync(entity, ct);
         }
 
-        public Task<TourOperator?> GetTourOperatorWithMembersAsync(Guid id, CancellationToken ct)
+        public Task<TourOperator?> GetATourOperatorAsync(Guid id, CancellationToken ct)
         {
             return _context.TourOperators
                 .FirstOrDefaultAsync(t => t.Id == id, ct);

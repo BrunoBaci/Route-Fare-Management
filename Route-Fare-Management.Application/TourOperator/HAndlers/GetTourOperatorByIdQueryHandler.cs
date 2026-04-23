@@ -15,14 +15,20 @@ namespace Route_Fare_Management.Application.TourOperator.HAndlers
         : IRequestHandler<GetTourOperatorByIdQuery, TourOperatorDto>
     {
         private readonly IRepository _repo;
-
-        public GetTourOperatorByIdQueryHandler(IRepository context)
-            => _repo = context;
+        private readonly ICurrentUserService _currentUser;
+        public GetTourOperatorByIdQueryHandler(IRepository context, ICurrentUserService currentUser)
+        { 
+            _repo = context;
+            _currentUser = currentUser;
+        }
 
         public async Task<TourOperatorDto> Handle(
             GetTourOperatorByIdQuery request, CancellationToken cancellationToken)
         {
-            var op = await _repo.GetTourOperatorWithMembersAsync(request.Id, cancellationToken)
+            if (!_currentUser.IsAdmin &&
+                 _currentUser.TourOperatorId != request.Id)
+                throw new ForbiddenAccessException();
+            var op = await _repo.GetATourOperatorAsync(request.Id, cancellationToken)
                 ?? throw new NotFoundException(
                     nameof(Domain.TourOperator), request.Id);
 

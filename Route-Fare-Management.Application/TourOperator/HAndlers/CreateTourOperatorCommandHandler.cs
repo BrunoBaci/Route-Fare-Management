@@ -29,7 +29,7 @@ namespace Route_Fare_Management.Application.TourOperator.HAndlers
             await _repo.SaveChangesAsync(cancellationToken);
 
             // Reload with navigation properties for correct MemberCount
-            var loaded = await _repo.GetTourOperatorWithMembersAsync(op.Id, cancellationToken)
+            var loaded = await _repo.GetATourOperatorAsync(op.Id, cancellationToken)
             ?? throw new Exception("Failed to load created TourOperator");
 
             return loaded.ToDto();
