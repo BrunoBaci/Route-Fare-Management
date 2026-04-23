@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DocumentFormat.OpenXml.InkML;
 using Microsoft.AspNetCore.SignalR;
 using Route_Fare_Management.Application.Interfaces;
 
@@ -18,11 +19,14 @@ namespace Route_Fare_Management.API.Services
         public HubClientsAdapter(IHubContext<ExportProgressHub> hub) => _hub = hub;
 
         public Task SendAsync(
-            string connectionId,
+            string jobId,
             string method,
             object?[] args,
             CancellationToken cancellationToken = default)
-            => _hub.Clients.Client(connectionId)
+        {
+            return _hub.Clients.Group(jobId)
                    .SendCoreAsync(method, args, cancellationToken);
+        }
+
     }
 }

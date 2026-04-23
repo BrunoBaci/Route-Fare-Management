@@ -13,7 +13,6 @@ namespace Route_Fare_Management.Domain
         public string FirstName { get; private set; } = default!;
         public string LastName { get; private set; } = default!;
         public UserRole Role { get; private set; }
-        public Guid? TourOperatorId { get; private set; }
         public bool IsActive { get; private set; } = true;
 
         // Navigation property
@@ -35,7 +34,7 @@ namespace Route_Fare_Management.Domain
 
         public static User CreateTourOperatorMember(
             string email, string passwordHash,
-            string firstName, string lastName, Guid tourOperatorId)
+            string firstName, string lastName)
             => new()
             {
                 Email = email.ToLowerInvariant(),
@@ -43,19 +42,10 @@ namespace Route_Fare_Management.Domain
                 FirstName = firstName.Trim(),
                 LastName = lastName.Trim(),
                 Role = UserRole.TourOperatorMember,
-                TourOperatorId = tourOperatorId
             };
-
-        public void UpdatePassword(string newHash)
+        public void AssignTourOperator(TourOperator op)
         {
-            PasswordHash = newHash;
-            SetUpdatedAt();
-        }
-
-        public void Deactivate()
-        {
-            IsActive = false;
-            SetUpdatedAt();
+            TourOperator = op;
         }
     }
 }

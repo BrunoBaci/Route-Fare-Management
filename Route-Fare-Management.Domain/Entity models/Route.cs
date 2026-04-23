@@ -50,7 +50,6 @@ namespace Route_Fare_Management.Domain
             SetUpdatedAt();
         }
 
-        public void Deactivate() { IsActive = false; SetUpdatedAt(); }
     }
 
 }

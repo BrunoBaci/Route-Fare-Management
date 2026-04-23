@@ -6,7 +6,6 @@
         {
             return new(op.Id, op.Name, op.IsActive,
                 op.SupportedBookingClasses.Select(bc => bc.ToString()).ToList(),
-                op.Members.Count,
                 op.CreatedAt);
         }
     }

@@ -2,7 +2,6 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Route_Fare_Management.Application.Interfaces;
-using Route_Fare_Management.Infrastructure.Repositories;
 
 namespace Route_Fare_Management.Infrastructure.Services
 {
@@ -22,7 +21,7 @@ namespace Route_Fare_Management.Infrastructure.Services
                     }));
 
             // -------------------- Repository --------------------
-            services.AddScoped<IRepository, Repository>();
+            services.AddScoped<IRepository, PersistenceService>();
 
             // -------------------- Security --------------------
             services.AddScoped<IPasswordHasher, BcryptPasswordHasher>();

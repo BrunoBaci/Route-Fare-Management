@@ -40,10 +40,10 @@ namespace Route_Fare_Management.Application.Auth
             else
             {
                 var tour = Domain.TourOperator.Create(request.FirstName, Enumerable.Empty<BookingClass>());
-               user =  User.CreateTourOperatorMember(
+                user =  User.CreateTourOperatorMember(
                     request.Email, hash,
-                    request.FirstName, request.LastName,
-                    tour.Id);
+                    request.FirstName, request.LastName);
+                user.AssignTourOperator(tour);
                 await _context.AddAsync(tour, cancellationToken);
             }
 
@@ -54,7 +54,7 @@ namespace Route_Fare_Management.Application.Auth
 
             return new AuthResponseDto(
                 user.Id, user.Email, user.FirstName, user.LastName,
-                user.Role.ToString(), user.TourOperatorId,
+                user.Role.ToString(),
                 token, DateTime.UtcNow.AddHours(24));
         }
     }

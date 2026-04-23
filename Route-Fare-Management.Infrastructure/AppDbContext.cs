@@ -135,6 +135,11 @@ namespace Route_Fare_Management.Infrastructure
                  .HasMaxLength(50)
                  .IsRequired()
                  .HasDefaultValue(new List<BookingClass>());
+
+                b.HasOne(t => t.OwnerUser)
+                    .WithOne(u => u.TourOperator)
+                    .HasForeignKey<TourOperator>(t => t.UserId).IsRequired(false)
+                    .OnDelete(DeleteBehavior.Restrict);
             });
 
             modelBuilder.Entity<TourOperatorRoute>(b => {
@@ -177,26 +182,12 @@ namespace Route_Fare_Management.Infrastructure
                 b.Property(u => u.IsActive).IsRequired().HasDefaultValue(true);
                 b.Property(u => u.CreatedAt).IsRequired();
                 b.Property(u => u.UpdatedAt);
-
-                b.HasOne(u => u.TourOperator)
-                 .WithMany(t => t.Members)
-                 .HasForeignKey(u => u.TourOperatorId)
-                 .IsRequired(false)
-                 .OnDelete(DeleteBehavior.SetNull);
-
             });
         }
 
         public override async Task<int> SaveChangesAsync(
     CancellationToken cancellationToken = default)
         {
-            //Collect domain events before saving (entities may be detached after)
-            var entitiesWithEvents = ChangeTracker
-                .Entries<BaseEntity>()
-                .Select(e => e.Entity)
-                .Where(e => e.DomainEvents.Any())
-                .ToList();
-
             // Auto-stamp UpdatedAt on every modified entity
             foreach (var entry in ChangeTracker.Entries<BaseEntity>()
                 .Where(e => e.State == EntityState.Modified))
@@ -204,12 +195,8 @@ namespace Route_Fare_Management.Infrastructure
                 entry.Entity.SetUpdatedAt();
             }
 
-            // 3. Persist
             var result = await base.SaveChangesAsync(cancellationToken);
 
-            // 4. Clear events after successful persist
-            foreach (var entity in entitiesWithEvents)
-                entity.ClearDomainEvents();
 
             return result;
         }

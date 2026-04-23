@@ -1,21 +1,14 @@
-﻿using MediatR;
-using System.Threading;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Route_Fare_Management.Application.Interfaces;
 using Route_Fare_Management.Domain;
 using Route_Fare_Management.Domain.Exceptions;
-using System.Linq;
-using Azure.Core;
-using Route_Fare_Management.Application.PricingFunctionality.DTOs;
-using DocumentFormat.OpenXml.Office2016.Excel;
-using Microsoft.AspNetCore.Routing;
 
-namespace Route_Fare_Management.Infrastructure.Repositories
+namespace Route_Fare_Management.Infrastructure.Services
 {
-    public class Repository : IRepository
+    public class PersistenceService : IRepository
     {
         private readonly AppDbContext _context;
-        public Repository(AppDbContext context)
+        public PersistenceService(AppDbContext context)
         {
             _context = context;
         }
@@ -35,7 +28,8 @@ namespace Route_Fare_Management.Infrastructure.Repositories
         /// <exception cref="NotFoundException"></exception>
         public async Task<User> GetUserAsync(string email, CancellationToken token)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(
+            var user = await _context.Users
+                .Include(u => u.TourOperator).FirstOrDefaultAsync(
                    u => u.Email == email.ToLowerInvariant() && u.IsActive,
                    token);
             return user;
@@ -69,7 +63,7 @@ namespace Route_Fare_Management.Infrastructure.Repositories
 
         public async Task AddAsync(PricingEntry route, CancellationToken token)
         {
-           await  _context.PricingEntries.AddAsync(route, token);
+            await _context.PricingEntries.AddAsync(route, token);
         }
 
         public async Task AddAsync(TourOperator entity, CancellationToken ct)
@@ -80,7 +74,6 @@ namespace Route_Fare_Management.Infrastructure.Repositories
         public Task<TourOperator?> GetTourOperatorWithMembersAsync(Guid id, CancellationToken ct)
         {
             return _context.TourOperators
-                .Include(t => t.Members)
                 .FirstOrDefaultAsync(t => t.Id == id, ct);
         }
 
@@ -121,8 +114,8 @@ namespace Route_Fare_Management.Infrastructure.Repositories
         {
             var route = await _context.Routes
                 .FindAsync(new object[] { id }, token);
-            
-            if(route != null)
+
+            if (route != null)
                 route.Update(
                 origin,
                 destination,
@@ -138,7 +131,7 @@ namespace Route_Fare_Management.Infrastructure.Repositories
             CancellationToken cancellationToken)
         {
             return await _context.TourOperatorRoutes
-             .Include(t => t.TourOperator).ThenInclude(o => o.Members)
+             .Include(t => t.TourOperator)
              .Include(t => t.Route)
              .Include(t => t.Season)
              .Include(t => t.PricingEntries)
@@ -206,14 +199,12 @@ namespace Route_Fare_Management.Infrastructure.Repositories
         public Task<TourOperator?> GetTourOperatorAsync(Guid id, CancellationToken ct)
         {
             return _context.TourOperators
-                .Include(t => t.Members)
                 .FirstOrDefaultAsync(t => t.Id == id, ct);
         }
 
         public async Task<List<TourOperator>> GetTourOperatorsAsync(CancellationToken ct, bool activeOnly = false)
         {
             var query = _context.TourOperators
-                .Include(t => t.Members)
                 .AsNoTracking();
 
             if (activeOnly == true)
@@ -234,7 +225,6 @@ namespace Route_Fare_Management.Infrastructure.Repositories
         {
             var query = _context.TourOperatorRoutes
                 .Include(t => t.TourOperator)
-                    .ThenInclude(o => o.Members)
                 .Include(t => t.Route)
                 .Include(t => t.Season)
                 .AsNoTracking()

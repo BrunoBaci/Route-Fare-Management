@@ -12,7 +12,6 @@ namespace Route_Fare_Management.Application.Auth
         string FirstName,
         string LastName,
         string Role,
-        Guid? TourOperatorId,
         string Token,
         DateTime ExpiresAt);
 }

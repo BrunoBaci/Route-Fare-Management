@@ -12,6 +12,9 @@ namespace Route_Fare_Management.Domain
         public string Name { get; private set; } = default!;
         public bool IsActive { get; private set; } = true;
 
+        public Guid? UserId { get; private set; }
+        public User OwnerUser { get; private set; } /*= default!;*/
+
         private List<BookingClass> _supportedBookingClasses = new();
 
         public IReadOnlyCollection<BookingClass> SupportedBookingClasses
@@ -19,9 +22,6 @@ namespace Route_Fare_Management.Domain
 
         public ICollection<TourOperatorRoute> TourOperatorRoutes { get; private set; }
             = new List<TourOperatorRoute>();
-
-        public ICollection<User> Members { get; private set; }
-            = new List<User>();
 
         // Required by EF Core
         private TourOperator() { }

@@ -32,7 +32,9 @@ namespace Route_Fare_Management.API.Controllers
         public async Task<IActionResult> GetById(Guid id, CancellationToken ct)
             => Ok(await _mediator.Send(new GetSeasonByIdQuery(id), ct));
 
-        /// <summary>Create a season (Winter or Summer for a given year). Admin only.</summary>
+        /// <summary>
+        /// Create a season (Winter or Summer for a given year)
+        /// Admin only.</summary>
         [HttpPost]
         [Authorize(Policy = "AdminOnly")]
         [ProducesResponseType(typeof(SeasonDto), StatusCodes.Status201Created)]

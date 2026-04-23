@@ -17,8 +17,8 @@ namespace Route_Fare_Management.API.Controllers
 
         public TourOperatorsController(ISender mediator) => _mediator = mediator;
 
-        /// <summary>List tour operators 
-        /// Admin only
+        /// <summary>
+        /// List tour operators 
         /// </summary>
         [HttpGet]
         [Authorize(Policy = "AdminOnly")]

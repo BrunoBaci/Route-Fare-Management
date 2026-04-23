@@ -12,8 +12,8 @@ using Route_Fare_Management.Infrastructure;
 namespace Route_Fare_Management.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260422175649_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20260423213942_InitialRecreate2")]
+    partial class InitialRecreate2
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -159,11 +159,6 @@ namespace Route_Fare_Management.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Code")
-                        .IsRequired()
-                        .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
-
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
@@ -180,6 +175,9 @@ namespace Route_Fare_Management.Infrastructure.Migrations
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<Guid?>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("_supportedBookingClasses")
                         .IsRequired()
                         .ValueGeneratedOnAdd()
@@ -190,8 +188,9 @@ namespace Route_Fare_Management.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Code")
-                        .IsUnique();
+                    b.HasIndex("UserId")
+                        .IsUnique()
+                        .HasFilter("[UserId] IS NOT NULL");
 
                     b.ToTable("TourOperators", (string)null);
                 });
@@ -265,9 +264,6 @@ namespace Route_Fare_Management.Infrastructure.Migrations
                     b.Property<int>("Role")
                         .HasColumnType("int");
 
-                    b.Property<Guid?>("TourOperatorId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
@@ -275,8 +271,6 @@ namespace Route_Fare_Management.Infrastructure.Migrations
 
                     b.HasIndex("Email")
                         .IsUnique();
-
-                    b.HasIndex("TourOperatorId");
 
                     b.ToTable("Users", (string)null);
                 });
@@ -290,6 +284,16 @@ namespace Route_Fare_Management.Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("TourOperatorRoute");
+                });
+
+            modelBuilder.Entity("Route_Fare_Management.Domain.TourOperator", b =>
+                {
+                    b.HasOne("Route_Fare_Management.Domain.User", "OwnerUser")
+                        .WithOne("TourOperator")
+                        .HasForeignKey("Route_Fare_Management.Domain.TourOperator", "UserId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("OwnerUser");
                 });
 
             modelBuilder.Entity("Route_Fare_Management.Domain.TourOperatorRoute", b =>
@@ -319,16 +323,6 @@ namespace Route_Fare_Management.Infrastructure.Migrations
                     b.Navigation("TourOperator");
                 });
 
-            modelBuilder.Entity("Route_Fare_Management.Domain.User", b =>
-                {
-                    b.HasOne("Route_Fare_Management.Domain.TourOperator", "TourOperator")
-                        .WithMany("Members")
-                        .HasForeignKey("TourOperatorId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.Navigation("TourOperator");
-                });
-
             modelBuilder.Entity("Route_Fare_Management.Domain.Route", b =>
                 {
                     b.Navigation("TourOperatorRoutes");
@@ -341,14 +335,17 @@ namespace Route_Fare_Management.Infrastructure.Migrations
 
             modelBuilder.Entity("Route_Fare_Management.Domain.TourOperator", b =>
                 {
-                    b.Navigation("Members");
-
                     b.Navigation("TourOperatorRoutes");
                 });
 
             modelBuilder.Entity("Route_Fare_Management.Domain.TourOperatorRoute", b =>
                 {
                     b.Navigation("PricingEntries");
+                });
+
+            modelBuilder.Entity("Route_Fare_Management.Domain.User", b =>
+                {
+                    b.Navigation("TourOperator");
                 });
 #pragma warning restore 612, 618
         }
