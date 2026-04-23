@@ -12,7 +12,7 @@ namespace Route_Fare_Management.Application.PricingFunctionality.Commands
     /// Days that already have entries are skipped.
     /// Returns the number of rows created
     /// </summary>
-    public sealed record InitializePricingTableCommand(
+    public record InitializePricingTableCommand(
         Guid TourOperatorId,
         Guid RouteId,
         Guid SeasonId) : IRequest<int>;

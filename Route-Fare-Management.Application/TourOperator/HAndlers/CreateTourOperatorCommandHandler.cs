@@ -23,7 +23,7 @@ namespace Route_Fare_Management.Application.TourOperator.HAndlers
             CreateTourOperatorCommand request, CancellationToken cancellationToken)
         {
             var op = Domain.TourOperator.Create(
-                request.Name, request.Code, request.SupportedBookingClasses);
+                request.Name,  request.SupportedBookingClasses);
 
             await _repo.AddAsync(op, cancellationToken);
             await _repo.SaveChangesAsync(cancellationToken);

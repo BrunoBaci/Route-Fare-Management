@@ -2,6 +2,7 @@ using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi;
 using Route_Fare_Management.API;
 using Route_Fare_Management.API.Services;
 using Route_Fare_Management.Application.Interfaces;
@@ -9,12 +10,12 @@ using Route_Fare_Management.Application.TourOperator.HAndlers;
 using Route_Fare_Management.Infrastructure.Services;
 using System.Reflection;
 using System.Text;
-
+using Microsoft.OpenApi.Models;
 var builder = WebApplication.CreateBuilder(args);
 
 //  Controllers 
 builder.Services.AddControllers();
-builder.Services.AddOpenApi();
+//builder.Services.AddOpenApi();
 
 // Infrastructure 
 builder.Services.AddInfrastructure(builder.Configuration);
@@ -27,6 +28,8 @@ builder.Services.AddMediatR(cfg =>
 });
 
 // JWT Settings 
+builder.Services.Configure<JwtSettings>(
+    builder.Configuration.GetSection("JwtSettings"));
 var jwtSettings = builder.Configuration
     .GetSection("JwtSettings")
     .Get<JwtSettings>()
@@ -35,7 +38,39 @@ var jwtSettings = builder.Configuration
 //  HttpContext 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(opts =>
+{
+    opts.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "Route Fare Management API",
+        Version = "v1"
+    });
+
+    opts.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Description = "JWT Bearer. Enter: Bearer {your token}",
+        Name = "Authorization",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.Http,
+        Scheme = "bearer",
+        BearerFormat = "JWT"
+    });
+
+    opts.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id   = "Bearer"
+                }
+            },
+            Array.Empty<string>()
+        }
+    });
+});
 //  Authentication 
 builder.Services
     .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -74,6 +109,13 @@ builder.Services
             }
         };
     });
+builder.Services.AddAuthorization(opts =>
+{
+    opts.AddPolicy("AdminOnly",
+        p => p.RequireRole("Admin"));
+    opts.AddPolicy("OperatorOrAdmin",
+        p => p.RequireRole("Admin", "TourOperatorMember"));
+});
 
 builder.Services.AddScoped<IJwtService, JwtService>();
 //  SignalR 
@@ -87,7 +129,7 @@ var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
+    //app.MapOpenApi();
 }
 
 app.UseHttpsRedirection();
@@ -98,6 +140,6 @@ app.UseAuthorization();
 app.MapControllers();
 app.UseSwagger();
 app.UseSwaggerUI();
-//app.MapHub<HubClientsAdapter>("/hubs/notifications");
+app.MapHub<ExportProgressHub>("/hubs/export");
 
 app.Run();

@@ -8,6 +8,7 @@ namespace Route_Fare_Management.Domain
 {
     public enum BookingClass
     {
+        Unassigned = 0,
         Economy = 1,
         Business = 2,
         First = 3

@@ -7,6 +7,8 @@ using Route_Fare_Management.Application.RouteFunctionality.Queries;
 
 namespace Route_Fare_Management.API.Controllers
 {
+    [ApiController]
+    [Route("api/[controller]")]
     public class RoutesController : Controller
     {
         private readonly ISender _mediator;
@@ -17,20 +19,23 @@ namespace Route_Fare_Management.API.Controllers
         [HttpGet]
         [ProducesResponseType(typeof(List<RouteDto>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetAll(
-            [FromQuery] int page = 1,
-            [FromQuery] int pageSize = 20,
             [FromQuery] string? search = null,
             CancellationToken ct = default)
             => Ok(await _mediator.Send(new GetRoutesQuery(search), ct));
 
-        /// <summary>Get a single route by ID.</summary>
+        /// <summary>
+        /// Get a single route by ID
+        /// </summary>
         [HttpGet("{id:guid}")]
         [ProducesResponseType(typeof(RouteDto), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetById(Guid id, CancellationToken ct)
             => Ok(await _mediator.Send(new GetRouteByIdQuery(id), ct));
 
-        /// <summary>Create a new route. Admin only.</summary>
+        /// <summary>
+        /// Create a new route
+        /// Admin only
+        /// </summary>
         [HttpPost]
         [Authorize(Policy = "AdminOnly")]
         [ProducesResponseType(typeof(RouteDto), StatusCodes.Status201Created)]
@@ -43,7 +48,9 @@ namespace Route_Fare_Management.API.Controllers
             return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
         }
 
-        /// <summary>Update an existing route. Admin only.</summary>
+        /// <summary>Update an existing route
+        /// Admin only
+        /// </summary>
         [HttpPut("{id:guid}")]
         [Authorize(Policy = "AdminOnly")]
         [ProducesResponseType(typeof(RouteDto), StatusCodes.Status200OK)]

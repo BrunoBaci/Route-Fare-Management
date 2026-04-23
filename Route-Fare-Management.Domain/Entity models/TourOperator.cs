@@ -10,11 +10,8 @@ namespace Route_Fare_Management.Domain
     public sealed class TourOperator : BaseEntity
     {
         public string Name { get; private set; } = default!;
-        public string Code { get; private set; } = default!;
         public bool IsActive { get; private set; } = true;
 
-        // Private backing field — EF Core accesses this directly via HasField()
-        // Exposed as read-only collection to prevent external mutation
         private List<BookingClass> _supportedBookingClasses = new();
 
         public IReadOnlyCollection<BookingClass> SupportedBookingClasses
@@ -30,12 +27,18 @@ namespace Route_Fare_Management.Domain
         private TourOperator() { }
 
         public static TourOperator Create(
-            string name, string code, IEnumerable<BookingClass> bookingClasses)
+            string name, IEnumerable<BookingClass> bookingClasses)
         {
+            if (bookingClasses == null || bookingClasses.Count() == 0)
+            {
+                bookingClasses = new List<BookingClass>() 
+                {
+                    0
+                };
+            }
             var op = new TourOperator
             {
                 Name = name.Trim(),
-                Code = code.Trim().ToUpperInvariant()
             };
             op._supportedBookingClasses = bookingClasses.Distinct().ToList();
             return op;

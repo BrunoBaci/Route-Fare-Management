@@ -11,7 +11,7 @@ using Route_Fare_Management.Domain.Exceptions;
 namespace Route_Fare_Management.Application.Auth
 {
 
-    public sealed class LoginCommandHandler
+    public class LoginCommandHandler
         : IRequestHandler<LoginCommand, AuthResponseDto>
     {
         private readonly IRepository _context;

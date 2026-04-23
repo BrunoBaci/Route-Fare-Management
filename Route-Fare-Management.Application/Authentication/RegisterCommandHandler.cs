@@ -31,12 +31,22 @@ namespace Route_Fare_Management.Application.Auth
         {
             var hash = _hasher.Hash(request.Password);
 
-            var user = request.Role == UserRole.Admin
-                ? User.CreateAdmin(request.Email, hash, request.FirstName, request.LastName)
-                : User.CreateTourOperatorMember(
+            bool isAdmin = request.Role == UserRole.Admin;
+            User user = null;
+            if (isAdmin)
+            {
+                user = User.CreateAdmin(request.Email, hash, request.FirstName, request.LastName);
+            }
+            else
+            {
+                var tour = Domain.TourOperator.Create(request.FirstName, Enumerable.Empty<BookingClass>());
+               user =  User.CreateTourOperatorMember(
                     request.Email, hash,
                     request.FirstName, request.LastName,
-                    request.TourOperatorId!.Value);
+                    tour.Id);
+                await _context.AddAsync(tour, cancellationToken);
+            }
+
 
             await _context.AddAndSaveAsync(user, cancellationToken);
 

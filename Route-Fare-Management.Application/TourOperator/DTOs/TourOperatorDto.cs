@@ -9,7 +9,6 @@ namespace Route_Fare_Management.Application.TourOperator.DTOs
     public record TourOperatorDto(
         Guid Id,
         string Name,
-        string Code,
         bool IsActive,
         List<string> SupportedBookingClasses,
         int MemberCount,

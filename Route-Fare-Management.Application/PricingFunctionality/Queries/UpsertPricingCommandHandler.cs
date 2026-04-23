@@ -12,7 +12,7 @@ using Route_Fare_Management.Domain;
 namespace Route_Fare_Management.Application.PricingFunctionality.Queries
 {
 
-    public sealed class UpsertPricingCommandHandler
+    public class UpsertPricingCommandHandler
         : IRequestHandler<UpsertPricingCommand, Unit>
     {
         private readonly IRepository repository;

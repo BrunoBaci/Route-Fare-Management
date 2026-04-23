@@ -7,6 +7,6 @@ using MediatR;
 
 namespace Route_Fare_Management.Application.Season.Queries
 {
-    public sealed record GetSeasonsQuery(int? Year = null) : IRequest<List<SeasonDto>>;
+    public record GetSeasonsQuery(int? Year = null) : IRequest<List<SeasonDto>>;
 
 }

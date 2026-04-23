@@ -8,7 +8,7 @@ using Route_Fare_Management.Application.Season;
 
 namespace Route_Fare_Management.Application.TourOperator.DTOs
 {
-    public sealed record TourOperatorRouteDto(
+    public record TourOperatorRouteDto(
         Guid Id,
         Guid TourOperatorId,
         string TourOperatorName,

@@ -8,7 +8,7 @@ using Route_Fare_Management.Application.TourOperator.DTOs;
 
 namespace Route_Fare_Management.Application.TourOperator.Commands
 {
-    public sealed record AssignRouteToSeasonCommand(
+    public record AssignRouteToSeasonCommand(
         Guid TourOperatorId,
         Guid RouteId,
         Guid SeasonId) : IRequest<TourOperatorRouteDto>;

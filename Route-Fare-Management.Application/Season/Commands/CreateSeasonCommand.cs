@@ -8,7 +8,7 @@ using Route_Fare_Management.Domain;
 
 namespace Route_Fare_Management.Application.Season.Commands
 {
-    public sealed record CreateSeasonCommand(
+    public record CreateSeasonCommand(
         int Year,
         SeasonType Type) : IRequest<SeasonDto>;
 

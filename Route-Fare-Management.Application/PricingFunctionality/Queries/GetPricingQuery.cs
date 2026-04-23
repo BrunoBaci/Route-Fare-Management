@@ -8,7 +8,7 @@ using Route_Fare_Management.Application.PricingFunctionality.DTOs;
 
 namespace Route_Fare_Management.Application.PricingFunctionality.Queries
 {
-    public sealed record GetPricingQuery(
+    public record GetPricingQuery(
         Guid TourOperatorId,
         Guid RouteId,
         Guid SeasonId) : IRequest<PricingTableDto>;

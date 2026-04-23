@@ -9,7 +9,7 @@ using Route_Fare_Management.Application.Season.Commands;
 
 namespace Route_Fare_Management.Application.Season.Handlers
 {
-    public sealed class CreateSeasonCommandHandler
+    public class CreateSeasonCommandHandler
         : IRequestHandler<CreateSeasonCommand, SeasonDto>
     {
         private readonly IRepository _repo;

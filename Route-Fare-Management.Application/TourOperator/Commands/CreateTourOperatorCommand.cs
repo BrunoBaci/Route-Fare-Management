@@ -9,9 +9,8 @@ using Route_Fare_Management.Domain;
 
 namespace Route_Fare_Management.Application.TourOperator.Commands
 {
-    public sealed record CreateTourOperatorCommand(
+    public record CreateTourOperatorCommand(
         string Name,
-        string Code,
         List<BookingClass> SupportedBookingClasses) : IRequest<TourOperatorDto>;
 
 }

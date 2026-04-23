@@ -84,7 +84,7 @@ namespace Route_Fare_Management.Infrastructure.Services
                 await _notify.SendProgressAsync(connectionId, 88,
                     "Saving file…", cancellationToken);
 
-                var fileName = $"pricing_{op.Code}_{season.Type}_{season.Year}" +
+                var fileName = $"pricing_{op.Name}_{season.Type}_{season.Year}" +
                                $"_{DateTime.UtcNow:yyyyMMddHHmmss}.xlsx";
                 var filePath = Path.Combine(ExportsFolder, fileName);
                 wb.SaveAs(filePath);

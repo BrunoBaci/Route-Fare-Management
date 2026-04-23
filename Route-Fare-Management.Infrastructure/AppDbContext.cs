@@ -113,8 +113,6 @@ namespace Route_Fare_Management.Infrastructure
                 b.HasKey(t => t.Id);
 
                 b.Property(t => t.Name).IsRequired().HasMaxLength(200);
-                b.Property(t => t.Code).IsRequired().HasMaxLength(10);
-                b.HasIndex(t => t.Code).IsUnique();
                 b.Property(t => t.IsActive).IsRequired().HasDefaultValue(true);
                 b.Property(t => t.CreatedAt).IsRequired();
                 b.Property(t => t.UpdatedAt);

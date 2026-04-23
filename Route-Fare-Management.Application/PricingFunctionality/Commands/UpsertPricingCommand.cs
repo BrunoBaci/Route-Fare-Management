@@ -8,7 +8,7 @@ using Route_Fare_Management.Application.PricingFunctionality.DTOs;
 
 namespace Route_Fare_Management.Application.PricingFunctionality.Commands
 {
-    public sealed record UpsertPricingCommand(
+    public record UpsertPricingCommand(
         Guid TourOperatorId,
         Guid RouteId,
         Guid SeasonId,

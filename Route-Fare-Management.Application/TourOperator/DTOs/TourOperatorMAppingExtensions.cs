@@ -4,7 +4,7 @@
     {
         public static TourOperatorDto ToDto(this Domain.TourOperator op)
         {
-            return new(op.Id, op.Name, op.Code, op.IsActive,
+            return new(op.Id, op.Name, op.IsActive,
                 op.SupportedBookingClasses.Select(bc => bc.ToString()).ToList(),
                 op.Members.Count,
                 op.CreatedAt);
