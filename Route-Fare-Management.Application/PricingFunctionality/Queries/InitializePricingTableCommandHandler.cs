@@ -29,6 +29,8 @@ namespace Route_Fare_Management.Application.PricingFunctionality.Queries
         public async Task<int> Handle(
             InitializePricingTableCommand request, CancellationToken cancellationToken)
         {
+            // Admin can create for everyone
+            // Operators can create only for themselves
             if (!_currentUser.IsAdmin &&
                 _currentUser.TourOperatorId != request.TourOperatorId)
                 throw new ForbiddenAccessException();

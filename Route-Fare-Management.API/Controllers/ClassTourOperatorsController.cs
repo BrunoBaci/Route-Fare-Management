@@ -24,8 +24,6 @@ namespace Route_Fare_Management.API.Controllers
         [Authorize(Policy = "AdminOnly")]
         [ProducesResponseType(typeof(List<TourOperatorDto>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetAll(
-            [FromQuery] int page = 1,
-            [FromQuery] int pageSize = 20,
             [FromQuery] bool? activeOnly = true,
             CancellationToken ct = default)
             => Ok(await _mediator.Send(
@@ -44,16 +42,16 @@ namespace Route_Fare_Management.API.Controllers
         /// <summary>Create a tour operator
         /// Admin only
         /// </summary>
-        [HttpPost]
-        [Authorize(Policy = "AdminOnly")]
-        [ProducesResponseType(typeof(TourOperatorDto), StatusCodes.Status201Created)]
-        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> Create(
-            [FromBody] CreateTourOperatorCommand command, CancellationToken ct)
-        {
-            var result = await _mediator.Send(command, ct);
-            return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
-        }
+        //[HttpPost]
+        //[Authorize(Policy = "AdminOnly")]
+        //[ProducesResponseType(typeof(TourOperatorDto), StatusCodes.Status201Created)]
+        //[ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+        //public async Task<IActionResult> Create(
+        //    [FromBody] CreateTourOperatorCommand command, CancellationToken ct)
+        //{
+        //    var result = await _mediator.Send(command, ct);
+        //    return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
+        //}
 
         /// <summary>Update a tour operator's name and booking classes
         /// Admin only

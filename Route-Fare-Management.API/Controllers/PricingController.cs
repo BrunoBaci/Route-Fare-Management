@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Route_Fare_Management.Application.PricingFunctionality.Commands;
 using Route_Fare_Management.Application.PricingFunctionality.DTOs;
@@ -6,6 +7,10 @@ using Route_Fare_Management.Application.PricingFunctionality.Queries;
 
 namespace Route_Fare_Management.API.Controllers
 {
+    [ApiController]
+    [Route("api/[controller]")]
+    [Authorize]
+    [Produces("application/json")]
     public class PricingController : Controller
     {
         private readonly ISender _mediator;

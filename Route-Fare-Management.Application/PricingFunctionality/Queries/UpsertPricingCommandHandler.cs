@@ -30,8 +30,10 @@ namespace Route_Fare_Management.Application.PricingFunctionality.Queries
             UpsertPricingCommand request, CancellationToken cancellationToken)
         {
             // Operators can only edit their own pricing
-            if (!_currentUser.IsAdmin &&
-                _currentUser.TourOperatorId != request.TourOperatorId)
+            // Admins can only view, not write, unless I understood the requirements incorrectly.
+            // Typically admins can overwrite anything but not in this case apparently
+            bool diffOperator = _currentUser.TourOperatorId != request.TourOperatorId;
+            if (diffOperator)
                 throw new ForbiddenAccessException();
 
             var tor = await repository.GetWithPricingAsync(
