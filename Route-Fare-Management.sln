@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.12.35527.113 d17.12
+VisualStudioVersion = 17.12.35527.113
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Route-Fare-Management.API", "Route-Fare-Management.API\Route-Fare-Management.API.csproj", "{1ACAEF41-5A12-477E-9526-CDE4D715E2D8}"
 EndProject
@@ -10,6 +10,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Route-Fare-Management.Domain", "Route-Fare-Management.Domain\Route-Fare-Management.Domain.csproj", "{98352F59-00BB-4EBC-8198-2E92978FD8C0}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Route-Fare-Management.Infrastructure", "Route-Fare-Management.Infrastructure\Route-Fare-Management.Infrastructure.csproj", "{8AF61051-DDC8-473C-9712-62CBCA1E0B10}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SignalRListener", "SignalRListener\SignalRListener.csproj", "{797DD8BA-B6CE-4341-BD98-D39A039ED769}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{8AF61051-DDC8-473C-9712-62CBCA1E0B10}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8AF61051-DDC8-473C-9712-62CBCA1E0B10}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8AF61051-DDC8-473C-9712-62CBCA1E0B10}.Release|Any CPU.Build.0 = Release|Any CPU
+		{797DD8BA-B6CE-4341-BD98-D39A039ED769}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{797DD8BA-B6CE-4341-BD98-D39A039ED769}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{797DD8BA-B6CE-4341-BD98-D39A039ED769}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{797DD8BA-B6CE-4341-BD98-D39A039ED769}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
