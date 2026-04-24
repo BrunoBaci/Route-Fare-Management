@@ -129,7 +129,9 @@ var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
-    //app.MapOpenApi();
+    app.UseSwagger();
+    app.UseSwaggerUI();
+    app.MapGet("/", () => Results.Redirect("/swagger"));
 }
 
 app.UseHttpsRedirection();
@@ -138,8 +140,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-app.UseSwagger();
-app.UseSwaggerUI();
 app.MapHub<ExportProgressHub>("/hubs/export");
 
 app.Run();

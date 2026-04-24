@@ -22,10 +22,10 @@ namespace Route_Fare_Management.Application.PricingFunctionality.Handlers
         private readonly ICurrentUserService _currentUser;
 
         public GetPricingQueryHandler(
-            IRepository context,
+            IRepository repository,
             ICurrentUserService currentUser)
         {
-            _repository = context;
+            _repository = repository;
             _currentUser = currentUser;
         }
 

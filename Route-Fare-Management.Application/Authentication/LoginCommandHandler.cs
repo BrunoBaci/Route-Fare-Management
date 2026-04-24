@@ -14,16 +14,16 @@ namespace Route_Fare_Management.Application.Auth
     public class LoginCommandHandler
         : IRequestHandler<LoginCommand, AuthResponseDto>
     {
-        private readonly IRepository _context;
+        private readonly IRepository _repository;
         private readonly IJwtService _jwt;
         private readonly IPasswordHasher _hasher;
 
         public LoginCommandHandler(
-            IRepository context,
+            IRepository repository,
             IJwtService jwt,
             IPasswordHasher hasher)
         {
-            _context = context;
+            _repository = repository;
             _jwt = jwt;
             _hasher = hasher;
         }
@@ -31,7 +31,7 @@ namespace Route_Fare_Management.Application.Auth
         public async Task<AuthResponseDto> Handle(
             LoginCommand request, CancellationToken cancellationToken)
         {
-            var user = await _context.GetUserAsync(request.Email, cancellationToken)
+            var user = await _repository.GetUserAsync(request.Email, cancellationToken)
                 ?? throw new NotFoundException(
                     nameof(User), request.Email);
 

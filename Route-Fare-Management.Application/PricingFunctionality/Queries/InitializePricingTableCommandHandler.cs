@@ -19,10 +19,10 @@ namespace Route_Fare_Management.Application.PricingFunctionality.Queries
         private readonly ICurrentUserService _currentUser;
 
         public InitializePricingTableCommandHandler(
-            IRepository context,
+            IRepository repository,
             ICurrentUserService currentUser)
         {
-            _repository = context;
+            _repository = repository;
             _currentUser = currentUser;
         }
 

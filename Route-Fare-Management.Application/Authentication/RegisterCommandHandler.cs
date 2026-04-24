@@ -12,16 +12,16 @@ namespace Route_Fare_Management.Application.Auth
     public class RegisterCommandHandler
         : IRequestHandler<RegisterCommand, AuthResponseDto>
     {
-        private readonly IRepository _context;
+        private readonly IRepository _repository;
         private readonly IJwtService _jwt;
         private readonly IPasswordHasher _hasher;
 
         public RegisterCommandHandler(
-            IRepository context,
+            IRepository repository,
             IJwtService jwt,
             IPasswordHasher hasher)
         {
-            _context = context;
+            _repository = repository;
             _jwt = jwt;
             _hasher = hasher;
         }
@@ -44,11 +44,11 @@ namespace Route_Fare_Management.Application.Auth
                     request.Email, hash,
                     request.FirstName, request.LastName);
                 user.AssignTourOperator(tour);
-                await _context.AddAsync(tour, cancellationToken);
+                await _repository.AddAsync(tour, cancellationToken);
             }
 
 
-            await _context.AddAndSaveAsync(user, cancellationToken);
+            await _repository.AddAndSaveAsync(user, cancellationToken);
 
             var token = _jwt.GenerateToken(user);
 

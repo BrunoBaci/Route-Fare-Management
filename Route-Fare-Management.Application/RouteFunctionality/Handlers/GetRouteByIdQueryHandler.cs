@@ -14,17 +14,17 @@ namespace Route_Fare_Management.Application.RouteFunctionality.Handlers
     public class GetRouteByIdQueryHandler
         : IRequestHandler<GetRouteByIdQuery, RouteDto>
     {
-        private readonly IRepository _context;
+        private readonly IRepository repository;
 
         public GetRouteByIdQueryHandler(IRepository context)
         {
-            _context = context;
+            repository = context;
         }
 
         public async Task<RouteDto> Handle(
             GetRouteByIdQuery request, CancellationToken cancellationToken)
         {
-            var route = await _context.GetRouteAsync(request.Id, cancellationToken)
+            var route = await repository.GetRouteAsync(request.Id, cancellationToken)
                 ?? throw new NotFoundException(
                     nameof(Domain.Route), request.Id);
 

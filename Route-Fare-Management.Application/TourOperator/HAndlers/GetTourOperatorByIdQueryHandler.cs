@@ -16,9 +16,9 @@ namespace Route_Fare_Management.Application.TourOperator.HAndlers
     {
         private readonly IRepository _repo;
         private readonly ICurrentUserService _currentUser;
-        public GetTourOperatorByIdQueryHandler(IRepository context, ICurrentUserService currentUser)
+        public GetTourOperatorByIdQueryHandler(IRepository repository, ICurrentUserService currentUser)
         { 
-            _repo = context;
+            _repo = repository;
             _currentUser = currentUser;
         }
 

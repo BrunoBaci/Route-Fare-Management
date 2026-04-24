@@ -13,15 +13,15 @@ namespace Route_Fare_Management.Application.Season.Handlers
     public class GetSeasonByIdQueryHandler
         : IRequestHandler<GetSeasonByIdQuery, SeasonDto>
     {
-        private readonly IRepository _context;
+        private readonly IRepository repository;
 
-        public GetSeasonByIdQueryHandler(IRepository context)
-            => _context = context;
+        public GetSeasonByIdQueryHandler(IRepository repository)
+            => this.repository = repository;
 
         public async Task<SeasonDto> Handle(
             GetSeasonByIdQuery request, CancellationToken cancellationToken)
         {
-            var season = await _context.GetSeasonAsync(request.Id, cancellationToken)
+            var season = await repository.GetSeasonAsync(request.Id, cancellationToken)
                 ?? throw new NotFoundException(
                     nameof(Domain.Season), request.Id);
 

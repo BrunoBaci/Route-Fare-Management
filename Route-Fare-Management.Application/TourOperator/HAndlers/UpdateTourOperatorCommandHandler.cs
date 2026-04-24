@@ -14,12 +14,12 @@ namespace Route_Fare_Management.Application.TourOperator.HAndlers
     public sealed class UpdateTourOperatorCommandHandler
         : IRequestHandler<UpdateTourOperatorCommand, TourOperatorDto>
     {
-        private readonly IRepository _context;
+        private readonly IRepository repository;
         private readonly ICurrentUserService _currentUser;
 
-        public UpdateTourOperatorCommandHandler(IRepository context, ICurrentUserService currentUser)
+        public UpdateTourOperatorCommandHandler(IRepository repository, ICurrentUserService currentUser)
         {
-            _context = context; 
+            this.repository = repository; 
             _currentUser = currentUser;
         } 
 
@@ -29,12 +29,12 @@ namespace Route_Fare_Management.Application.TourOperator.HAndlers
             if (!_currentUser.IsAdmin &&
                 _currentUser.TourOperatorId != request.Id)
                 throw new ForbiddenAccessException();
-            var op = await _context.GetATourOperatorAsync(request.Id, cancellationToken)
+            var op = await repository.GetATourOperatorAsync(request.Id, cancellationToken)
                 ?? throw new NotFoundException(
                     nameof(Domain.TourOperator), request.Id);
 
             op.Update(request.Name, request.SupportedBookingClasses);
-            await _context.SaveChangesAsync(cancellationToken);
+            await repository.SaveChangesAsync(cancellationToken);
 
             return op.ToDto();
         }

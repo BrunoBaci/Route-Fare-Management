@@ -16,9 +16,9 @@ namespace Route_Fare_Management.Application.RouteFunctionality.Handlers
     {
         private readonly IRepository _repository;
 
-        public UpdateRouteCommandHandler(IRepository context)
+        public UpdateRouteCommandHandler(IRepository repository)
         {
-            _repository = context;
+            _repository = repository;
         }
 
         public async Task<RouteDto> Handle(

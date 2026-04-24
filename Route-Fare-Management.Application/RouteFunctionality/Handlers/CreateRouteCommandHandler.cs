@@ -13,10 +13,10 @@ namespace Route_Fare_Management.Application.RouteFunctionality.Handlers
     public class CreateRouteCommandHandler
         : IRequestHandler<CreateRouteCommand, RouteDto>
     {
-        private readonly IRepository _context;
+        private readonly IRepository repository;
 
-        public CreateRouteCommandHandler(IRepository context)
-            => _context = context;
+        public CreateRouteCommandHandler(IRepository repository)
+            => this.repository = repository;
 
         public async Task<RouteDto> Handle(
             CreateRouteCommand request, CancellationToken cancellationToken)
@@ -27,7 +27,7 @@ namespace Route_Fare_Management.Application.RouteFunctionality.Handlers
                 request.Description,
                 request.BookingClasses);
 
-            await _context.AddAndSaveAsync(route, cancellationToken);
+            await repository.AddAndSaveAsync(route, cancellationToken);
 
             return route.ToDto();
         }
