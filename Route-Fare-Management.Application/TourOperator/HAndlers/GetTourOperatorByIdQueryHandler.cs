@@ -25,8 +25,8 @@ namespace Route_Fare_Management.Application.TourOperator.HAndlers
         public async Task<TourOperatorDto> Handle(
             GetTourOperatorByIdQuery request, CancellationToken cancellationToken)
         {
-            if (!_currentUser.IsAdmin &&
-                 _currentUser.TourOperatorId != request.Id)
+            if (!_currentUser.IsAdmin && //if user is not an administrator
+                 _currentUser.TourOperatorId != request.Id) // and is sending a request for an operator other than himself
                 throw new ForbiddenAccessException();
             var op = await _repo.GetATourOperatorAsync(request.Id, cancellationToken)
                 ?? throw new NotFoundException(

@@ -33,7 +33,7 @@ namespace Route_Fare_Management.API.Controllers
         /// Admin only
         /// </summary>
         [HttpGet("{id:guid}")]
-        [Authorize(Policy = "AdminOnly")]
+        [Authorize(Policy = "OperatorOrAdmin")]
         [ProducesResponseType(typeof(TourOperatorDto), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetById(Guid id, CancellationToken ct)
@@ -57,7 +57,7 @@ namespace Route_Fare_Management.API.Controllers
         /// Admin only
         /// </summary>
         [HttpPut("{id:guid}")]
-        [Authorize(Policy = "AdminOnly")]
+        [Authorize(Policy = "OperatorOrAdmin")]
         [ProducesResponseType(typeof(TourOperatorDto), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Update(

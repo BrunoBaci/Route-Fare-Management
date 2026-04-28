@@ -8,5 +8,6 @@ public record RegisterCommand(
     string Password,
     string FirstName,
     string LastName,
-    UserRole Role,
-    Guid? TourOperatorId) : IRequest<AuthResponseDto>;
+    UserRole Role//,
+    //Guid? TourOperatorId
+    ) : IRequest<AuthResponseDto>;

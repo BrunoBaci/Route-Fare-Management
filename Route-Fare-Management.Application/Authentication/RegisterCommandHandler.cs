@@ -55,7 +55,7 @@ namespace Route_Fare_Management.Application.Auth
             return new AuthResponseDto(
                 user.Id, user.Email, user.FirstName, user.LastName,
                 user.Role.ToString(),
-                token, DateTime.UtcNow.AddHours(24));
+                token, user.TourOperator?.Id, DateTime.UtcNow.AddHours(24));
         }
     }
 }

@@ -29,7 +29,8 @@ namespace Route_Fare_Management.Infrastructure.Services
         public async Task<User> GetUserAsync(string email, CancellationToken token)
         {
             var user = await _context.Users
-                .Include(u => u.TourOperator).FirstOrDefaultAsync(
+                .Include(u => u.TourOperator)
+                .FirstOrDefaultAsync(
                    u => u.Email == email.ToLowerInvariant() && u.IsActive,
                    token);
             return user;
@@ -120,7 +121,7 @@ namespace Route_Fare_Management.Infrastructure.Services
                 origin,
                 destination,
                 description,
-                bookingClasses);
+                bookingClasses); //move to handler
             await _context.SaveChangesAsync(token);
             return route;
         }
@@ -238,5 +239,19 @@ namespace Route_Fare_Management.Infrastructure.Services
                 .ThenBy(t => t.Season.Type)
                 .ToListAsync(cancellationToken);
         }
+
+        //public async Task<List<TourOperator>> GetTourOperatorBySeasonAndClass(string seasonType, BookingClass bookingClass, CancellationToken token)
+        //{
+        //    var query = _context.TourOperators
+        //        .Include(t => t.TourOperatorRoutes)
+        //        .ThenInclude(t => t.Route)
+        //        .Include(t => t.TourOperatorRoutes)
+        //        .ThenInclude(t => t.Season)
+        //        .AsNoTracking()
+        //        .Where(t => t.TourOperatorRoutes.Season.DisplayName == seasonType && t.Route.AvailableBookingClasses.Contains(bookingClass));
+
+        //    return await query.ToListAsync(token);
+        
+        //} 
     }
 }
